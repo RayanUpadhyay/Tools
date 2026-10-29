@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rayan's Tools</title>
+<meta name="description" content="Handy little tools by Rayan Upadhyay: pomodoro timer, calculators, converters, and a few games.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧰</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Caveat:wght@700&family=DM+Serif+Display&family=Fredoka:wght@500;700&family=Permanent+Marker&family=Press+Start+2P&family=Rubik:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --muted: #666;
+    --line: #ddd;
+    --accent: #e8443a;
+    --accent-ink: #fff;
+    --tfont: "Fredoka", sans-serif;
+    --tscale: 1;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: #fff;
+    color: var(--ink);
+    font-family: "Rubik", system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.45;
+  }
+  [hidden] { display: none !important; }
+  a { color: inherit; }
+
+  /* ===== HOME ===== */
+  .home-head { position: relative; text-align: center; padding: 56px 20px 0; }
+  .logo {
+    font-family: "Permanent Marker", cursive;
+    font-size: clamp(36px, 9.5vw, 104px);
+    line-height: 1;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.12em;
+    letter-spacing: 0.01em;
+  }
+  .logo .face { font-size: 0.55em; transform: translateY(0.08em) rotate(-8deg); display: inline-block; }
+  .tagline { font-size: 1.3em; margin: 10px 0 0; color: #333; }
+  .links-pill {
+    position: absolute; top: 14px; right: 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 2px solid var(--line); border-radius: 12px; padding: 8px 16px;
+    text-decoration: none; background: #fff; font-size: 1.05em;
+  }
+  .links-pill:hover, .links-pill:focus-visible { border-color: var(--ink); outline: none; }
+
+  .grid {
+    max-width: 1260px;
+    margin: 0 auto;
+    padding: 96px 28px 80px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px 36px;
+  }
+  .slot { position: relative; }
+  .deco {
+    position: absolute; top: -78px; font-size: 76px; line-height: 1;
+    pointer-events: none; z-index: 2;
+    filter: drop-shadow(0 4px 3px rgba(0,0,0,0.18));
+  }
+  .tile {
+    display: block; position: relative; aspect-ratio: 2.7 / 1;
+    border: 4px solid var(--ink); border-radius: 18px; overflow: hidden;
+    text-decoration: none; color: var(--ink); container-type: inline-size;
+    transition: transform 0.15s ease;
+  }
+  .tile:hover { transform: translateY(-4px) rotate(-0.6deg); }
+  .tile:focus-visible { outline: 4px solid #2563c9; outline-offset: 4px; }
+  .art {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    gap: 4cqw; padding: 0 6%; text-align: center; line-height: 1;
+  }
+  .art.col { flex-direction: column; gap: 2.5cqw; }
+
+  /* pomodoro */
+  .t-pomo { background: #e8443a; border-color: #a8241d; }
+  .t-pomo .tomato { font-size: 21cqw; }
+  .t-pomo .tt { font: 700 13cqw "Fredoka", sans-serif; color: #fff6e6; }
+  .t-pomo .pill {
+    display: inline-block; margin-top: 2.5cqw; background: #fff6e6; color: #a8241d;
+    border-radius: 99px; padding: 0.8cqw 3.5cqw; font: 700 5.5cqw "Fredoka", sans-serif;
+  }
+  /* flashcards */
+  .t-flash { background: #ffd95a; border-color: #c49a12; }
+  .t-flash .fc-back, .t-flash .fc-front {
+    position: absolute; left: 20%; top: 18%; width: 60%; height: 64%; border-radius: 1.5cqw;
+  }
+  .t-flash .fc-back { background: #fff3c4; transform: rotate(5deg) translate(2%, 3%); box-shadow: 0 1cqw 0 rgba(0,0,0,0.12); }
+  .t-flash .fc-front {
+    display: grid; place-items: center; transform: rotate(-3deg);
+    font: 700 12cqw "Caveat", cursive; color: #222;
+    background: #fff linear-gradient(to bottom, transparent 24%, #f28b82 24%, #f28b82 calc(24% + 2px), transparent calc(24% + 2px));
+    box-shadow: 0 1cqw 0 rgba(0,0,0,0.15);
+  }
+  /* calculator */
+  .t-calc { background: #2b2d31; border-color: #111; }
+  .t-calc .lcd {
+    width: 82%; background: #a7c09f; color: #1f2a1d; border-radius: 1.8cqw;
+    padding: 1.5cqw 4cqw; font: 12cqw "VT323", monospace; text-align: right; white-space: nowrap; overflow: hidden;
+    box-shadow: inset 0 1cqw 0 rgba(0,0,0,0.25);
+  }
+  .t-calc .minikeys { display: flex; gap: 2cqw; }
+  .t-calc .minikeys i { width: 8cqw; height: 4.5cqw; background: #55585f; border-radius: 1cqw; box-shadow: 0 0.8cqw 0 #18191c; }
+  .t-calc .minikeys i:last-child { background: #f59e0b; }
+  /* units */
+  .t-units {
+    background-color: #2563c9; border-color: #163f85;
+    background-image: linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px);
+    background-size: 5cqw 5cqw;
+  }
+  .t-units .tt { font: 700 11cqw "Space Grotesk", sans-serif; color: #fff; }
+  .t-units .sub { font: 500 5cqw "Space Grotesk", sans-serif; color: #cfe0ff; }
+  .t-units .ruler {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 10%;
+    background: #ffe14d repeating-linear-gradient(90deg, #222 0 2px, transparent 2px 3cqw);
+    background-size: 100% 45%; background-repeat: no-repeat; border-top: 2px solid #163f85;
+  }
+  /* words */
+  .t-words { background: #f3ede1; border-color: #3a3a3a; }
+  .t-words .pil { position: absolute; right: 3%; top: -12%; font: 48cqw "DM Serif Display", serif; color: rgba(0,0,0,0.06); }
+  .t-words .tt { font: 14cqw "DM Serif Display", serif; color: #222; position: relative; }
+  .t-words .sub { font: 500 5cqw "Space Grotesk", sans-serif; color: #8a6d3b; position: relative; }
+  /* age */
+  .t-age {
+    background-color: #ffd6e8; border-color: #c2185b;
+    background-image:
+      radial-gradient(circle, #ff7eb6 1.2cqw, transparent 1.3cqw),
+      radial-gradient(circle, #ffc61a 1cqw, transparent 1.1cqw),
+      radial-gradient(circle, #5bc0eb 1cqw, transparent 1.1cqw);
+    background-size: 23cqw 19cqw, 29cqw 23cqw, 17cqw 27cqw;
+    background-position: 0 0, 9cqw 7cqw, 4cqw 13cqw;
+  }
+  .t-age .cake { font-size: 18cqw; }
+  .t-age .tt {
+    font: 700 9.5cqw "Fredoka", sans-serif; color: #ad1457; background: #fff;
+    padding: 2cqw 4cqw; border-radius: 99px; border: 0.7cqw solid #ad1457;
+  }
+  /* color */
+  .t-color { border-color: #222; background: linear-gradient(90deg, #ff595e 0 16.6%, #ff924c 0 33.3%, #ffca3a 0 50%, #8ac926 0 66.6%, #1982c4 0 83.3%, #6a4c93 0); }
+  .t-color .label {
+    background: #fff; border: 0.9cqw solid #222; border-radius: 99px; padding: 2cqw 6cqw;
+    font: 700 10cqw "Fredoka", sans-serif; color: #222; box-shadow: 0 1.2cqw 0 #222;
+  }
+  /* base */
+  .t-base { background: radial-gradient(ellipse at center, #2a1d0b, #160f05 70%); border-color: #ffb000; }
+  .t-base::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0.25) 0 1px, transparent 1px 3px);
+  }
+  .t-base .tt { font: 11.5cqw "VT323", monospace; color: #ffb000; text-shadow: 0 0 6px rgba(255,176,0,0.6); }
+  .t-base .sub { font: 7cqw "VT323", monospace; color: #c08a2a; }
+  /* case */
+  .t-case { background: #fff; border-color: #222; }
+  .t-case .tt { font: 10cqw "Bungee", sans-serif; }
+  .t-case .tt b { display: inline-block; font-weight: 400; }
+  .t-case .tt b:nth-child(4n+1) { color: #e8443a; transform: rotate(-7deg); }
+  .t-case .tt b:nth-child(4n+2) { color: #2563c9; transform: rotate(5deg) translateY(1cqw); }
+  .t-case .tt b:nth-child(4n+3) { color: #f59e0b; transform: rotate(-3deg); }
+  .t-case .tt b:nth-child(4n) { color: #1f7a4a; transform: rotate(6deg) translateY(-0.5cqw); }
+  .t-case .sub { font: 500 4.8cqw "Space Grotesk", sans-serif; color: #777; }
+  /* dice */
+  .t-dice { background: radial-gradient(ellipse at center, #2a9a5e, #16603a); border-color: #0f4428; }
+  .t-dice .tt { font: 8.5cqw "Bungee", sans-serif; color: #fff; }
+  .t-dice .tdie {
+    flex: none; width: 17cqw; height: 17cqw; background: #fff; border-radius: 3cqw; padding: 2.6cqw;
+    display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+    transform: rotate(-12deg); box-shadow: 0 1.2cqw 0 rgba(0,0,0,0.3);
+  }
+  .t-dice .tdie + .tt + .tdie { transform: rotate(10deg); }
+  .t-dice .tdie i { width: 3cqw; height: 3cqw; place-self: center; }
+  .t-dice .tdie i.p { background: #222; border-radius: 50%; }
+  /* reaction */
+  .t-react { background: #ffe14d; border-color: #222; }
+  .t-react .bolt { font-size: 20cqw; }
+  .t-react .tt { font: 7cqw "Press Start 2P", monospace; color: #222; line-height: 1.35; text-align: left; }
+  .t-react .sub { display: block; margin-top: 2.5cqw; font: 500 4.8cqw "Space Grotesk", sans-serif; color: #5a4a00; text-align: left; }
+  /* typing */
+  .t-type { background: #e6e8ee; border-color: #3b3f4a; }
+  .t-type .keycaps { display: flex; gap: 1.6cqw; }
+  .t-type kbd {
+    display: grid; place-items: center; width: 10.5cqw; height: 10.5cqw;
+    background: #fff; border: 0.6cqw solid #3b3f4a; border-radius: 2cqw;
+    box-shadow: 0 1.1cqw 0 #3b3f4a; font: 700 6cqw "Space Grotesk", sans-serif; color: #222;
+  }
+  .t-type kbd:nth-child(odd) { transform: translateY(-1cqw); }
+  .t-type .sub { font: 500 5.5cqw "Space Grotesk", sans-serif; color: #555; margin-top: 1.5cqw; }
+
+  @media (max-width: 1020px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .deco.later { display: none; }
+  }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: minmax(0, 1fr); padding: 104px 18px 60px; gap: 24px; }
+    .links-pill { position: static; margin-bottom: 18px; }
+    .home-head { padding-top: 18px; }
+  }
+
+  /* ===== TOOL PAGES ===== */
+  .tool-wrap { max-width: 980px; margin: 0 auto; padding: 24px 22px 70px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+    border: 2px solid var(--line); border-radius: 12px; padding: 6px 14px; font-weight: 500; background: #fff;
+  }
+  .back:hover, .back:focus-visible { border-color: var(--ink); outline: none; }
+  .banner {
+    margin: 20px 0 22px; padding: 22px 28px; border: 4px solid var(--ink); border-radius: 18px;
+    background: var(--accent); color: var(--accent-ink);
+  }
+  .banner h1 {
+    margin: 0; font-family: var(--tfont); font-weight: 700; line-height: 1.05;
+    font-size: calc(clamp(34px, 6vw, 60px) * var(--tscale));
+  }
+  .banner p { margin: 8px 0 0; font-size: 1.05em; opacity: 0.9; }
+
+  #toolView[data-active="pomodoro"]   { --accent: #e8443a; --accent-ink: #fff;    --tfont: "Fredoka", sans-serif; }
+  #toolView[data-active="flashcards"] { --accent: #ffd95a; --accent-ink: #222;    --tfont: "Caveat", cursive; --tscale: 1.25; }
+  #toolView[data-active="calculator"] { --accent: #2b2d31; --accent-ink: #a7c09f; --tfont: "VT323", monospace; --tscale: 1.35; }
+  #toolView[data-active="units"]      { --accent: #2563c9; --accent-ink: #fff;    --tfont: "Space Grotesk", sans-serif; }
+  #toolView[data-active="words"]      { --accent: #f3ede1; --accent-ink: #222;    --tfont: "DM Serif Display", serif; }
+  #toolView[data-active="age"]        { --accent: #d81b72; --accent-ink: #fff;    --tfont: "Fredoka", sans-serif; }
+  #toolView[data-active="color"]      { --accent: #6a4c93; --accent-ink: #fff;    --tfont: "Fredoka", sans-serif; }
+  #toolView[data-active="base"]       { --accent: #160f05; --accent-ink: #ffb000; --tfont: "VT323", monospace; --tscale: 1.35; }
+  #toolView[data-active="case"]       { --accent: #e8443a; --accent-ink: #fff;    --tfont: "Bungee", sans-serif; --tscale: 0.75; }
+  #toolView[data-active="dice"]       { --accent: #1f7a4a; --accent-ink: #fff;    --tfont: "Bungee", sans-serif; --tscale: 0.8; }
+  #toolView[data-active="reaction"]   { --accent: #ffe14d; --accent-ink: #222;    --tfont: "Press Start 2P", monospace; --tscale: 0.5; }
+  #toolView[data-active="typing"]     { --accent: #3b3f4a; --accent-ink: #fff;    --tfont: "Space Grotesk", sans-serif; }
+  /* accents that need to stay readable as fills on white */
+  #toolView[data-active="words"] { --fill: #3a3a3a; --fill-ink: #fff; }
+  #toolView[data-active="flashcards"] { --fill: #f5b301; --fill-ink: #222; }
+  #toolView[data-active="base"] { --fill: #ffb000; --fill-ink: #160f05; }
+  #toolView[data-active="calculator"] { --fill: #2b2d31; --fill-ink: #fff; }
+
+  .win { border: 4px solid var(--ink); border-radius: 18px; background: #fff; }
+  .body { padding: 26px clamp(18px, 3vw, 32px) 30px; }
+  .body > p:first-child { margin-top: 0; }
+
+  .huge {
+    font-family: var(--tfont); font-weight: 700;
+    font-size: clamp(64px, 13vw, 120px); line-height: 1; margin: 12px 0; overflow-wrap: anywhere;
+  }
+  .big { font-size: 1.9em; font-weight: 700; line-height: 1.15; overflow-wrap: anywhere; }
+  .muted { color: var(--muted); }
+  .err { color: #d32f2f; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0; }
+  .row.end { align-items: flex-end; }
+
+  .btn {
+    font: 500 1em "Rubik", sans-serif; color: var(--ink); background: #fff;
+    border: 2.5px solid var(--ink); border-radius: 999px; padding: 6px 18px; cursor: pointer;
+    box-shadow: 0 3px 0 var(--ink); transition: transform 0.05s;
+  }
+  .btn:hover { background: #f3f3f3; }
+  .btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+  .btn.on { background: var(--fill, var(--accent)); color: var(--fill-ink, var(--accent-ink)); }
+  .btn:focus-visible { outline: 3px solid #2563c9; outline-offset: 3px; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn.small { padding: 2px 12px; font-size: 0.9em; box-shadow: 0 2px 0 var(--ink); }
+
+  .field {
+    font: inherit; color: var(--ink); background: #fff;
+    border: 2.5px solid var(--ink); border-radius: 12px; padding: 6px 10px; min-width: 0;
+  }
+  .field:focus { outline: 3px solid #2563c9; outline-offset: 1px; }
+  .field::placeholder { color: #aaa; }
+  textarea.field { width: 100%; min-height: 9em; resize: vertical; display: block; }
+  .num { width: 5.5em; }
+  .lbl { display: flex; flex-direction: column; gap: 4px; color: var(--muted); font-size: 0.95em; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 18px; }
+  .stat { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 14px; background: #fafafa; }
+  .stat .n { display: block; font-size: 2em; font-weight: 700; line-height: 1.1; overflow-wrap: anywhere; }
+  .stat .k { color: var(--muted); font-size: 0.95em; }
+
+  .out-row { display: flex; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 2px dashed var(--line); }
+  .out-row .k { color: var(--muted); width: 4.5em; flex: none; }
+  .out-row .v { flex: 1; overflow-wrap: anywhere; font-size: 1.15em; font-weight: 500; }
+
+  .card {
+    width: 100%; min-height: 220px; display: grid; place-items: center; text-align: center;
+    padding: 28px; border: 3px solid var(--ink); border-radius: 16px; cursor: pointer;
+    font: 700 2.1em "Caveat", cursive; color: var(--ink); overflow-wrap: anywhere;
+    background: #fff linear-gradient(to bottom, transparent 46px, #f28b82 46px, #f28b82 48px, transparent 48px);
+    box-shadow: 0 5px 0 var(--ink);
+  }
+  .card.flipped { background-color: #fff6cf; }
+  .card:focus-visible { outline: 3px solid #2563c9; outline-offset: 3px; }
+  .card .side { display: block; font: 500 0.42em "Rubik", sans-serif; color: var(--muted); margin-bottom: 10px; }
+  .fc-list { margin-top: 20px; }
+  .fc-item { display: flex; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 2px dashed var(--line); }
+  .fc-item span { flex: 1; overflow-wrap: anywhere; }
+
+  .calc { max-width: 470px; }
+  .calc-screen {
+    background: #a7c09f; border: 3px solid var(--ink); border-radius: 14px; padding: 10px 16px;
+    text-align: right; margin-bottom: 14px; box-shadow: inset 0 4px 0 rgba(0,0,0,0.18);
+  }
+  .calc-expr { min-height: 1.4em; color: #3d5239; font: 1.4em "VT323", monospace; overflow-wrap: anywhere; }
+  .calc-res { font: 3.4em "VT323", monospace; line-height: 1; color: #1f2a1d; min-height: 1em; overflow-wrap: anywhere; }
+  .calc-res.err { color: #b3261e; }
+  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .keys .btn { border-radius: 14px; padding: 10px 0; }
+  .keys .btn.eq { background: #f59e0b; }
+
+  .dice { display: flex; flex-wrap: wrap; gap: 14px; margin: 16px 0; min-height: 80px; }
+  .die {
+    width: 80px; height: 80px; background: #fff; border: 3px solid var(--ink); border-radius: 16px;
+    padding: 11px; display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); box-shadow: 0 4px 0 var(--ink);
+  }
+  .die i { width: 13px; height: 13px; place-self: center; }
+  .die i.p { background: var(--ink); border-radius: 50%; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+  .react {
+    min-height: 300px; display: grid; place-items: center; text-align: center; padding: 24px;
+    border: 3px dashed var(--ink); border-radius: 18px; cursor: pointer; user-select: none;
+    font: 700 2em "Rubik", sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  }
+  .react:focus-visible { outline: 3px solid #2563c9; outline-offset: 3px; }
+  .react.wait { border-style: solid; background: #f1f1f1; color: var(--muted); }
+  .react.go { border-style: solid; background: var(--accent); color: var(--accent-ink); font-family: "Press Start 2P", monospace; }
+  .react.early { border-style: solid; border-color: #d32f2f; color: #d32f2f; background: #fdecea; }
+  .react .sub { display: block; font: 400 0.5em "Rubik", sans-serif; margin-top: 10px; }
+
+  .passage {
+    font: 1.35em ui-monospace, "SF Mono", Menlo, Consolas, monospace; line-height: 1.6;
+    color: #a3a3a3; margin: 14px 0; overflow-wrap: anywhere;
+  }
+  .passage .ok { color: var(--ink); }
+  .passage .no { color: #d32f2f; background: #fdecea; }
+  .passage .cur { background: var(--accent); color: var(--accent-ink); border-radius: 3px; }
+
+  .swatch { height: 150px; border: 3px solid var(--ink); border-radius: 16px; margin: 14px 0; }
+  input[type="color"] { width: 64px; height: 46px; padding: 3px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; cursor: pointer; }
+
+  footer { text-align: center; padding: 10px 20px 44px; color: var(--muted); }
+
+  @media (max-width: 640px) {
+    .split { grid-template-columns: 1fr; }
+    .banner { padding: 18px 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tile, .btn { transition: none; }
+    .tile:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="home">
+  <header class="home-head">
+    <a class="links-pill" href="https://links.rayanupadhyay.com">🔗 All my links</a>
+    <h1 class="logo">RAYAN<span class="face" aria-hidden="true">🧰</span>TOOLS</h1>
+    <p class="tagline">handy little tools by Rayan</p>
+  </header>
+
+  <div class="grid">
+    <div class="slot">
+      <a class="tile t-pomo" href="#pomodoro" aria-label="Pomodoro timer">
+        <div class="art"><span class="tomato" aria-hidden="true">🍅</span><div><div class="tt">Pomodoro</div><div class="pill">25:00</div></div></div>
+      </a>
+    </div>
+    <div class="slot">
+      <span class="deco later" style="right:10%" aria-hidden="true">🪴</span>
+      <a class="tile t-flash" href="#flashcards" aria-label="Flashcards">
+        <div class="art"><div class="fc-back"></div><div class="fc-front">Flashcards</div></div>
+      </a>
+    </div>
+
+    <div class="slot">
+      <a class="tile t-calc" href="#calculator" aria-label="Scientific calculator">
+        <div class="art col"><div class="lcd">Calculator</div><div class="minikeys" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>
+      </a>
+    </div>
+    <div class="slot">
+      <a class="tile t-type" href="#typing" aria-label="Typing speed test">
+        <div class="art col"><div class="keycaps" aria-hidden="true"><kbd>T</kbd><kbd>Y</kbd><kbd>P</kbd><kbd>I</kbd><kbd>N</kbd><kbd>G</kbd></div><span class="sub">speed test</span></div>
+      </a>
+    </div>
+    <div class="slot">
+      <a class="tile t-age" href="#age" aria-label="Age calculator">
+        <div class="art"><span class="cake" aria-hidden="true">🎂</span><span class="tt">How Old Am I?</span></div>
+      </a>
+    </div>
+
+    <div class="slot">
+      <a class="tile t-units" href="#units" aria-label="Unit converter">
+        <div class="art col"><span class="tt">Unit Converter</span><span class="sub">cm ⇄ inches, °C ⇄ °F</span></div>
+        <div class="ruler" aria-hidden="true"></div>
+      </a>
+    </div>
+    <div class="slot">
+      <a class="tile t-dice" href="#dice" aria-label="Coin flip and dice roller">
+        <div class="art">
+          <div class="tdie" aria-hidden="true"><i class="p"></i><i></i><i class="p"></i><i></i><i class="p"></i><i></i><i class="p"></i><i></i><i class="p"></i></div>
+          <span class="tt">Coin &amp; Dice</span>
+          <div class="tdie" aria-hidden="true"><i class="p"></i><i></i><i></i><i></i><i class="p"></i><i></i><i></i><i></i><i class="p"></i></div>
+        </div>
+      </a>
+    </div>
+    <div class="slot">
+      <a class="tile t-words" href="#words" aria-label="Word counter">
+        <span class="pil" aria-hidden="true">¶</span>
+        <div class="art col"><span class="tt">Word Counter</span><span class="sub">for essays with word limits</span></div>
+      </a>
+    </div>
+
+    <div class="slot">
+      <a class="tile t-color" href="#color" aria-label="Color picker">
+        <div class="art"><span class="label">Color Picker</span></div>
+      </a>
+    </div>
+    <div class="slot">
+      <a class="tile t-react" href="#reaction" aria-label="Reaction time test">
+        <div class="art"><span class="bolt" aria-hidden="true">⚡</span><div><div class="tt">REACTION<br>TIME</div><span class="sub">how fast are you?</span></div></div>
+      </a>
+    </div>
+    <div class="slot">
+      <a class="tile t-case" href="#case" aria-label="Case changer">
+        <div class="art col"><span class="tt" aria-hidden="true"><b>c</b><b>A</b><b>s</b><b>E</b> <b>C</b><b>h</b><b>A</b><b>n</b><b>G</b><b>e</b><b>R</b></span><span class="sub">UPPER, lower, snake_case</span></div>
+      </a>
+    </div>
+
+    <div class="slot">
+      <a class="tile t-base" href="#base" aria-label="Number base converter">
+        <div class="art col"><span class="sub">0b11111111 = 0xFF</span><span class="tt">Base Converter</span></div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div id="toolView" hidden>
+  <div class="tool-wrap">
+    <a class="back" href="#">← all tools</a>
+    <div class="banner"><h1 id="toolTitle"></h1><p id="toolBlurb"></p></div>
+
+    <!-- POMODORO -->
+    <section class="win" data-tool="pomodoro" hidden>
+      <div class="body">
+        <div class="row" id="pomoModes">
+          <button class="btn" data-mode="focus">focus</button>
+          <button class="btn" data-mode="short">short break</button>
+          <button class="btn" data-mode="long">long break</button>
+        </div>
+        <div class="huge" id="pomoTime" aria-live="off">25:00</div>
+        <div class="row">
+          <button class="btn" id="pomoStart">start</button>
+          <button class="btn" id="pomoReset">reset</button>
+        </div>
+        <p class="muted" id="pomoInfo"></p>
+        <div class="row end">
+          <label class="lbl">focus min<input class="field num" type="number" min="1" max="180" id="pomoFocus" value="25"></label>
+          <label class="lbl">short min<input class="field num" type="number" min="1" max="60" id="pomoShort" value="5"></label>
+          <label class="lbl">long min<input class="field num" type="number" min="1" max="90" id="pomoLong" value="15"></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLASHCARDS -->
+    <section class="win" data-tool="flashcards" hidden>
+      <div class="body">
+        <button class="card" id="fcCard" type="button"></button>
+        <div class="row">
+          <button class="btn" id="fcPrev">prev</button>
+          <button class="btn" id="fcFlip">flip</button>
+          <button class="btn" id="fcNext">next</button>
+          <button class="btn" id="fcShuffle">shuffle</button>
+          <span class="muted" id="fcCount"></span>
+        </div>
+        <div class="row end">
+          <label class="lbl" style="flex:1 1 200px">question<input class="field" id="fcQ" placeholder="What is the capital of Karnataka?"></label>
+          <label class="lbl" style="flex:1 1 200px">answer<input class="field" id="fcA" placeholder="Bengaluru"></label>
+          <button class="btn" id="fcAdd">add card</button>
+        </div>
+        <div class="fc-list" id="fcList"></div>
+      </div>
+    </section>
+
+    <!-- CALCULATOR -->
+    <section class="win" data-tool="calculator" hidden>
+      <div class="body">
+        <div class="calc">
+          <div class="calc-screen">
+            <div class="calc-expr" id="calcExpr"></div>
+            <div class="calc-res" id="calcRes">0</div>
+          </div>
+          <div class="keys" id="calcKeys">
+            <button class="btn" data-k="deg" id="calcDeg">deg</button>
+            <button class="btn" data-k="(">(</button>
+            <button class="btn" data-k=")">)</button>
+            <button class="btn" data-k="e">e</button>
+            <button class="btn" data-k="ac">AC</button>
+            <button class="btn" data-k="sin(">sin</button>
+            <button class="btn" data-k="cos(">cos</button>
+            <button class="btn" data-k="tan(">tan</button>
+            <button class="btn" data-k="√(">√</button>
+            <button class="btn" data-k="del" aria-label="Delete">⌫</button>
+            <button class="btn" data-k="7">7</button>
+            <button class="btn" data-k="8">8</button>
+            <button class="btn" data-k="9">9</button>
+            <button class="btn" data-k="÷">÷</button>
+            <button class="btn" data-k="^">xʸ</button>
+            <button class="btn" data-k="4">4</button>
+            <button class="btn" data-k="5">5</button>
+            <button class="btn" data-k="6">6</button>
+            <button class="btn" data-k="×">×</button>
+            <button class="btn" data-k="log(">log</button>
+            <button class="btn" data-k="1">1</button>
+            <button class="btn" data-k="2">2</button>
+            <button class="btn" data-k="3">3</button>
+            <button class="btn" data-k="−">−</button>
+            <button class="btn" data-k="ln(">ln</button>
+            <button class="btn" data-k="0">0</button>
+            <button class="btn" data-k=".">.</button>
+            <button class="btn" data-k="π">π</button>
+            <button class="btn" data-k="+">+</button>
+            <button class="btn eq" data-k="=">=</button>
+          </div>
+          <p class="muted">You can type with your keyboard too. Enter solves, Esc clears.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- UNITS -->
+    <section class="win" data-tool="units" hidden>
+      <div class="body">
+        <div class="row" id="unitCats"></div>
+        <div class="row end">
+          <label class="lbl">value<input class="field" type="number" id="unitVal" value="1" style="width:8em"></label>
+          <label class="lbl">from<select class="field" id="unitFrom"></select></label>
+          <button class="btn" id="unitSwap" aria-label="Swap units">⇄</button>
+          <label class="lbl">to<select class="field" id="unitTo"></select></label>
+        </div>
+        <div class="big" id="unitOut"></div>
+      </div>
+    </section>
+
+    <!-- WORDS -->
+    <section class="win" data-tool="words" hidden>
+      <div class="body">
+        <textarea class="field" id="wordText" placeholder="Paste or type your essay here." aria-label="Text to count"></textarea>
+        <div class="row end">
+          <label class="lbl">word limit (optional)<input class="field num" type="number" min="1" id="wordLimit" style="width:7em"></label>
+          <span id="wordLimitMsg" class="muted"></span>
+        </div>
+        <div class="stats" id="wordStats"></div>
+      </div>
+    </section>
+
+    <!-- AGE -->
+    <section class="win" data-tool="age" hidden>
+      <div class="body">
+        <div class="row end">
+          <label class="lbl">birthday<input class="field" type="date" id="ageDate"></label>
+        </div>
+        <div id="ageOut"><p class="muted">Pick a birthday to see the exact age.</p></div>
+      </div>
+    </section>
+
+    <!-- COLOR -->
+    <section class="win" data-tool="color" hidden>
+      <div class="body">
+        <div class="row end">
+          <input type="color" id="colPick" value="#ffb000" aria-label="Pick a color">
+          <label class="lbl">hex<input class="field" id="colHex" value="#ffb000" style="width:8em"></label>
+          <button class="btn" id="colRand">random</button>
+        </div>
+        <div class="swatch" id="colSwatch"></div>
+        <div id="colOut"></div>
+      </div>
+    </section>
+
+    <!-- BASE -->
+    <section class="win" data-tool="base" hidden>
+      <div class="body">
+        <div class="row end">
+          <label class="lbl">number<input class="field" id="baseIn" value="255" style="width:12em" autocapitalize="off" spellcheck="false"></label>
+          <label class="lbl">it's in
+            <select class="field" id="baseFrom">
+              <option value="2">binary</option>
+              <option value="8">octal</option>
+              <option value="10" selected>decimal</option>
+              <option value="16">hex</option>
+            </select>
+          </label>
+        </div>
+        <p class="err" id="baseErr" hidden></p>
+        <div id="baseOut"></div>
+      </div>
+    </section>
+
+    <!-- CASE -->
+    <section class="win" data-tool="case" hidden>
+      <div class="body">
+        <textarea class="field" id="caseIn" placeholder="Type or paste some text." aria-label="Text to convert"></textarea>
+        <div class="row" id="caseBtns">
+          <button class="btn" data-case="upper">UPPERCASE</button>
+          <button class="btn" data-case="lower">lowercase</button>
+          <button class="btn" data-case="title">Title Case</button>
+          <button class="btn" data-case="sentence">Sentence case</button>
+          <button class="btn" data-case="camel">camelCase</button>
+          <button class="btn" data-case="snake">snake_case</button>
+          <button class="btn" data-case="kebab">kebab-case</button>
+        </div>
+        <textarea class="field" id="caseOut" readonly aria-label="Converted text"></textarea>
+        <div class="row"><button class="btn" id="caseCopy">copy</button></div>
+      </div>
+    </section>
+
+    <!-- DICE -->
+    <section class="win" data-tool="dice" hidden>
+      <div class="body split">
+        <div>
+          <p class="muted">coin</p>
+          <div class="huge" id="coinOut" aria-live="polite">?</div>
+          <div class="row"><button class="btn" id="coinFlip">flip</button></div>
+          <p class="muted" id="coinTally">heads 0, tails 0</p>
+        </div>
+        <div>
+          <p class="muted">dice</p>
+          <div class="dice" id="diceOut"></div>
+          <div class="row">
+            <select class="field" id="diceN" aria-label="Number of dice">
+              <option value="1">1 die</option><option value="2" selected>2 dice</option>
+              <option value="3">3 dice</option><option value="4">4 dice</option>
+              <option value="5">5 dice</option><option value="6">6 dice</option>
+            </select>
+            <button class="btn" id="diceRoll">roll</button>
+          </div>
+          <p class="muted" id="diceTotal" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- REACTION -->
+    <section class="win" data-tool="reaction" hidden>
+      <div class="body">
+        <div class="react" id="react" tabindex="0" role="button" aria-live="polite"></div>
+        <p class="muted" id="reactStats"></p>
+      </div>
+    </section>
+
+    <!-- TYPING -->
+    <section class="win" data-tool="typing" hidden>
+      <div class="body">
+        <div class="row">
+          <button class="btn" data-secs="15">15s</button>
+          <button class="btn" data-secs="30">30s</button>
+          <button class="btn" data-secs="60">60s</button>
+          <button class="btn" id="typeRestart">restart</button>
+        </div>
+        <div class="stats" style="margin-top:0">
+          <div class="stat"><span class="n" id="typeTime">30</span><span class="k">seconds left</span></div>
+          <div class="stat"><span class="n" id="typeWpm">0</span><span class="k">wpm</span></div>
+          <div class="stat"><span class="n" id="typeAcc">100%</span><span class="k">accuracy</span></div>
+        </div>
+        <div class="passage" id="typePassage" aria-hidden="true"></div>
+        <textarea class="field" id="typeIn" style="min-height:4em" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Start typing the words above. The timer starts with your first key." aria-label="Type the passage"></textarea>
+        <p class="big" id="typeResult" aria-live="polite"></p>
+      </div>
+    </section>
+    </div>
+</div>
+
+<footer>made by Rayan. more at <a href="https://links.rayanupadhyay.com">links.rayanupadhyay.com</a></footer>
+<script>
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const store = {
+  get(key, fallback) {
+    try { const v = localStorage.getItem("tools:" + key); return v === null ? fallback : JSON.parse(v); }
+    catch { return fallback; }
+  },
+  set(key, value) { try { localStorage.setItem("tools:" + key, JSON.stringify(value)); } catch {} }
+};
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const pad = n => String(n).padStart(2, "0");
+let pageTitle = "Rayan's Tools";
+const fmt = n => Number(n).toLocaleString("en-IN", { maximumFractionDigits: 6 });
+
+async function copyText(text, btn) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const t = document.createElement("textarea");
+    t.value = text; document.body.appendChild(t); t.select();
+    try { document.execCommand("copy"); } catch {}
+    t.remove();
+  }
+  if (btn) {
+    const old = btn.textContent;
+    btn.textContent = "copied";
+    setTimeout(() => { btn.textContent = old; }, 1200);
+  }
+}
+
+function outRow(label, value) {
+  const row = document.createElement("div");
+  row.className = "out-row";
+  const k = document.createElement("span"); k.className = "k"; k.textContent = label;
+  const v = document.createElement("span"); v.className = "v"; v.textContent = value;
+  const b = document.createElement("button"); b.className = "btn small"; b.textContent = "copy";
+  b.addEventListener("click", () => copyText(value, b));
+  row.append(k, v, b);
+  return row;
+}
+
+function statBox(n, k) {
+  const d = document.createElement("div"); d.className = "stat";
+  const a = document.createElement("span"); a.className = "n"; a.textContent = n;
+  const b = document.createElement("span"); b.className = "k"; b.textContent = k;
+  d.append(a, b);
+  return d;
+}
+
+let audioCtx;
+function beep(times = 3) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    for (let i = 0; i < times; i++) {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "square"; o.frequency.value = 880;
+      const t = audioCtx.currentTime + i * 0.35;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.15, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t); o.stop(t + 0.3);
+    }
+  } catch {}
+}
+
+/* ---------- router ---------- */
+const TITLES = {
+  pomodoro: ["Pomodoro Timer", "Focus for a bit, then take a break. Repeat."],
+  flashcards: ["Flashcards", "Make cards and quiz yourself. They save on this device."],
+  calculator: ["Calculator", "A scientific calculator with a retro screen."],
+  units: ["Unit Converter", "Length, weight, temperature, speed, and data."],
+  words: ["Word Counter", "Words, characters, and reading time for anything you paste."],
+  age: ["How Old Am I?", "Your exact age, down to the second."],
+  color: ["Color Picker", "Pick a color and copy its hex, RGB, or HSL code."],
+  base: ["Base Converter", "Switch numbers between binary, octal, decimal, and hex."],
+  case: ["Case Changer", "Turn text into UPPERCASE, Title Case, snake_case, and more."],
+  dice: ["Coin & Dice", "For settling arguments fairly."],
+  reaction: ["Reaction Time", "Click the moment the box lights up."],
+  typing: ["Typing Test", "How many words per minute can you type?"]
+};
+const sections = [...document.querySelectorAll("[data-tool]")];
+let current = "";
+let homeScroll = 0;
+function route() {
+  const name = location.hash.slice(1);
+  const sec = sections.find(s => s.dataset.tool === name);
+  if (!sec) {
+    current = "";
+    $("toolView").hidden = true;
+    $("home").hidden = false;
+    pageTitle = "Rayan's Tools";
+    if (!pomo.running) document.title = pageTitle;
+    requestAnimationFrame(() => window.scrollTo(0, homeScroll));
+    return;
+  }
+  if (current === "") homeScroll = window.scrollY;
+  current = name;
+  $("home").hidden = true;
+  $("toolView").hidden = false;
+  $("toolView").dataset.active = name;
+  sections.forEach(s => { s.hidden = s !== sec; });
+  $("toolTitle").textContent = TITLES[name][0];
+  $("toolBlurb").textContent = TITLES[name][1];
+  pageTitle = TITLES[name][0] + " | Rayan's Tools";
+  if (!pomo.running) document.title = pageTitle;
+  window.scrollTo(0, 0);
+  if (name === "reaction") reactReset();
+}
+window.addEventListener("hashchange", route);
+
+/* ---------- pomodoro ---------- */
+const pomo = { mode: "focus", left: 0, running: false, endAt: 0, timer: null, count: 0 };
+const pomoNames = { focus: "focus", short: "short break", long: "long break" };
+function pomoMins(mode) {
+  const id = { focus: "pomoFocus", short: "pomoShort", long: "pomoLong" }[mode];
+  const v = Math.round(Number($(id).value));
+  return v > 0 ? v : { focus: 25, short: 5, long: 15 }[mode];
+}
+function pomoDraw() {
+  const s = Math.max(0, Math.ceil(pomo.left));
+  const txt = pad(Math.floor(s / 60)) + ":" + pad(s % 60);
+  $("pomoTime").textContent = txt;
+  $("pomoStart").textContent = pomo.running ? "pause" : "start";
+  document.title = pomo.running ? `${txt} ${pomoNames[pomo.mode]}` : pageTitle;
+  document.querySelectorAll("#pomoModes .btn").forEach(b => b.classList.toggle("on", b.dataset.mode === pomo.mode));
+  $("pomoInfo").textContent = `focus sessions done today: ${pomo.count}`;
+}
+function pomoSet(mode) {
+  pomoStop();
+  pomo.mode = mode;
+  pomo.left = pomoMins(mode) * 60;
+  pomoDraw();
+}
+function pomoStop() {
+  pomo.running = false;
+  clearInterval(pomo.timer);
+}
+function pomoTick() {
+  pomo.left = (pomo.endAt - Date.now()) / 1000;
+  if (pomo.left <= 0) {
+    pomoStop();
+    beep(3);
+    if (pomo.mode === "focus") {
+      pomo.count++;
+      store.set("pomo", { day: new Date().toDateString(), count: pomo.count });
+      pomoSet(pomo.count % 4 === 0 ? "long" : "short");
+    } else {
+      pomoSet("focus");
+    }
+    return;
+  }
+  pomoDraw();
+}
+$("pomoStart").addEventListener("click", () => {
+  if (pomo.running) { pomoTick(); pomoStop(); pomoDraw(); return; }
+  if (pomo.left <= 0) pomo.left = pomoMins(pomo.mode) * 60;
+  pomo.running = true;
+  pomo.endAt = Date.now() + pomo.left * 1000;
+  pomo.timer = setInterval(pomoTick, 250);
+  pomoDraw();
+});
+$("pomoReset").addEventListener("click", () => pomoSet(pomo.mode));
+document.querySelectorAll("#pomoModes .btn").forEach(b => b.addEventListener("click", () => pomoSet(b.dataset.mode)));
+["pomoFocus", "pomoShort", "pomoLong"].forEach(id => $(id).addEventListener("change", () => {
+  store.set("pomoMins", { f: $("pomoFocus").value, s: $("pomoShort").value, l: $("pomoLong").value });
+  if (!pomo.running) pomoSet(pomo.mode);
+}));
+(function pomoInit() {
+  const m = store.get("pomoMins", null);
+  if (m) { $("pomoFocus").value = m.f; $("pomoShort").value = m.s; $("pomoLong").value = m.l; }
+  const saved = store.get("pomo", null);
+  if (saved && saved.day === new Date().toDateString()) pomo.count = saved.count;
+  pomoSet("focus");
+})();
+
+/* ---------- flashcards ---------- */
+let cards = store.get("cards", []);
+let fcIndex = 0, fcFlipped = false;
+function fcSave() { store.set("cards", cards); }
+function fcDraw() {
+  const card = $("fcCard");
+  card.textContent = "";
+  card.classList.toggle("flipped", fcFlipped);
+  const has = cards.length > 0;
+  ["fcPrev", "fcFlip", "fcNext", "fcShuffle"].forEach(id => { $(id).disabled = !has; });
+  if (!has) {
+    card.textContent = "No cards yet. Add a question and answer below to start.";
+    $("fcCount").textContent = "";
+  } else {
+    fcIndex = Math.min(fcIndex, cards.length - 1);
+    const c = cards[fcIndex];
+    const side = document.createElement("span"); side.className = "side";
+    side.textContent = fcFlipped ? "answer" : "question (click to flip)";
+    const txt = document.createElement("span");
+    txt.textContent = fcFlipped ? c.a : c.q;
+    card.append(side, txt);
+    $("fcCount").textContent = `${fcIndex + 1} / ${cards.length}`;
+  }
+  const list = $("fcList");
+  list.textContent = "";
+  cards.forEach((c, i) => {
+    const item = document.createElement("div"); item.className = "fc-item";
+    const t = document.createElement("span"); t.textContent = `${c.q}  =  ${c.a}`;
+    const b = document.createElement("button"); b.className = "btn small"; b.textContent = "delete";
+    b.addEventListener("click", () => { cards.splice(i, 1); fcSave(); fcDraw(); });
+    item.append(t, b);
+    list.appendChild(item);
+  });
+}
+function fcMove(d) { if (!cards.length) return; fcIndex = (fcIndex + d + cards.length) % cards.length; fcFlipped = false; fcDraw(); }
+$("fcCard").addEventListener("click", () => { if (cards.length) { fcFlipped = !fcFlipped; fcDraw(); } });
+$("fcFlip").addEventListener("click", () => { fcFlipped = !fcFlipped; fcDraw(); });
+$("fcPrev").addEventListener("click", () => fcMove(-1));
+$("fcNext").addEventListener("click", () => fcMove(1));
+$("fcShuffle").addEventListener("click", () => {
+  for (let i = cards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [cards[i], cards[j]] = [cards[j], cards[i]]; }
+  fcIndex = 0; fcFlipped = false; fcSave(); fcDraw();
+});
+function fcAdd() {
+  const q = $("fcQ").value.trim(), a = $("fcA").value.trim();
+  if (!q || !a) { (q ? $("fcA") : $("fcQ")).focus(); return; }
+  cards.push({ q, a });
+  fcIndex = cards.length - 1; fcFlipped = false;
+  $("fcQ").value = ""; $("fcA").value = "";
+  $("fcQ").focus();
+  fcSave(); fcDraw();
+}
+$("fcAdd").addEventListener("click", fcAdd);
+$("fcA").addEventListener("keydown", e => { if (e.key === "Enter") fcAdd(); });
+$("fcQ").addEventListener("keydown", e => { if (e.key === "Enter") $("fcA").focus(); });
+fcDraw();
+
+/* ---------- calculator ---------- */
+let calcExpr = "", calcDeg = true, calcJustSolved = false;
+const CALC_WORDS = ["sin", "cos", "tan", "log", "ln", "sqrt", "PI", "E"];
+function calcEval(s) {
+  let js = s.replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-")
+            .replace(/\^/g, "**").replace(/√/g, "sqrt").replace(/π/g, "PI").replace(/\be\b/g, "E");
+  if (/[^0-9+\-*/().\sa-zA-Z]/.test(js)) throw new Error("bad");
+  const words = js.match(/[a-zA-Z]+/g) || [];
+  if (words.some(w => !CALC_WORDS.includes(w))) throw new Error("bad");
+  const open = (js.match(/\(/g) || []).length - (js.match(/\)/g) || []).length;
+  if (open > 0) js += ")".repeat(open);
+  const toRad = x => calcDeg ? x * Math.PI / 180 : x;
+  const trig = f => x => { const r = f(toRad(x)); return Math.abs(r) < 1e-12 ? 0 : r; };
+  const fn = new Function("sin", "cos", "tan", "log", "ln", "sqrt", "PI", "E", '"use strict"; return (' + js + ");");
+  const r = fn(trig(Math.sin), trig(Math.cos), trig(Math.tan), Math.log10, Math.log, Math.sqrt, Math.PI, Math.E);
+  if (typeof r !== "number" || !isFinite(r)) throw new Error("bad");
+  return Number(r.toPrecision(12));
+}
+function calcDraw(final) {
+  $("calcExpr").textContent = calcExpr;
+  if (!calcExpr) { $("calcRes").textContent = "0"; return; }
+  try {
+    const r = calcEval(calcExpr);
+    $("calcRes").textContent = String(r);
+    $("calcRes").classList.remove("err");
+    return r;
+  } catch {
+    $("calcRes").textContent = final ? "error" : "";
+    $("calcRes").classList.toggle("err", !!final);
+  }
+}
+function calcPress(k) {
+  if (k === "deg") { calcDeg = !calcDeg; $("calcDeg").textContent = calcDeg ? "deg" : "rad"; calcDraw(); return; }
+  if (k === "ac") { calcExpr = ""; calcJustSolved = false; calcDraw(); return; }
+  if (k === "del") { calcExpr = calcExpr.slice(0, -1); calcJustSolved = false; calcDraw(); return; }
+  if (k === "=") {
+    const r = calcDraw(true);
+    if (r !== undefined) { calcExpr = String(r); calcJustSolved = true; $("calcExpr").textContent = ""; }
+    return;
+  }
+  if (calcJustSolved && /^[0-9.(πesctl√]/.test(k)) calcExpr = "";
+  calcJustSolved = false;
+  calcExpr += k;
+  calcDraw();
+}
+$("calcKeys").addEventListener("click", e => { const b = e.target.closest("[data-k]"); if (b) calcPress(b.dataset.k); });
+document.addEventListener("keydown", e => {
+  if (current !== "calculator" || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.target.matches("input, textarea, select")) return;
+  const map = { "*": "×", "/": "÷", "-": "−", "Enter": "=", "=": "=", "Backspace": "del", "Escape": "ac", "p": "π" };
+  let k = map[e.key] || e.key;
+  if (/^[0-9.+()^e]$/.test(k) || ["×", "÷", "−", "=", "del", "ac", "π"].includes(k)) {
+    if (e.key === "Enter" && document.activeElement && document.activeElement.matches("#calcKeys .btn")) return;
+    e.preventDefault();
+    calcPress(k);
+  }
+});
+calcDraw();
+
+/* ---------- units ---------- */
+const UNITS = {
+  length: { m: 1, mm: 0.001, cm: 0.01, km: 1000, in: 0.0254, ft: 0.3048, yd: 0.9144, mi: 1609.344 },
+  weight: { kg: 1, mg: 1e-6, g: 0.001, tonne: 1000, oz: 0.028349523125, lb: 0.45359237 },
+  temperature: { "°C": "c", "°F": "f", K: "k" },
+  speed: { "km/h": 1 / 3.6, "m/s": 1, mph: 0.44704, knot: 0.514444 },
+  data: { B: 1, KB: 1024, MB: 1024 ** 2, GB: 1024 ** 3, TB: 1024 ** 4 }
+};
+const UNIT_DEFAULTS = { length: ["cm", "in"], weight: ["kg", "lb"], temperature: ["°C", "°F"], speed: ["km/h", "mph"], data: ["MB", "GB"] };
+let unitCat = "length";
+function toC(v, u) { return u === "c" ? v : u === "f" ? (v - 32) * 5 / 9 : v - 273.15; }
+function fromC(v, u) { return u === "c" ? v : u === "f" ? v * 9 / 5 + 32 : v + 273.15; }
+function unitSetCat(cat) {
+  unitCat = cat;
+  document.querySelectorAll("#unitCats .btn").forEach(b => b.classList.toggle("on", b.dataset.cat === cat));
+  const opts = Object.keys(UNITS[cat]).map(u => `<option>${u}</option>`).join("");
+  $("unitFrom").innerHTML = opts; $("unitTo").innerHTML = opts;
+  $("unitFrom").value = UNIT_DEFAULTS[cat][0]; $("unitTo").value = UNIT_DEFAULTS[cat][1];
+  unitCalc();
+}
+function unitCalc() {
+  const v = parseFloat($("unitVal").value);
+  const f = $("unitFrom").value, t = $("unitTo").value, set = UNITS[unitCat];
+  if (isNaN(v)) { $("unitOut").textContent = "Enter a number to convert."; return; }
+  const r = unitCat === "temperature" ? fromC(toC(v, set[f]), set[t]) : v * set[f] / set[t];
+  $("unitOut").textContent = `${fmt(v)} ${f} = ${fmt(Number(r.toPrecision(10)))} ${t}`;
+}
+Object.keys(UNITS).forEach(cat => {
+  const b = document.createElement("button");
+  b.className = "btn"; b.dataset.cat = cat; b.textContent = cat;
+  b.addEventListener("click", () => unitSetCat(cat));
+  $("unitCats").appendChild(b);
+});
+["unitVal", "unitFrom", "unitTo"].forEach(id => $(id).addEventListener("input", unitCalc));
+$("unitSwap").addEventListener("click", () => {
+  const f = $("unitFrom").value; $("unitFrom").value = $("unitTo").value; $("unitTo").value = f; unitCalc();
+});
+unitSetCat("length");
+
+/* ---------- words ---------- */
+function wordCalc() {
+  const t = $("wordText").value;
+  const words = (t.trim().match(/\S+/g) || []).length;
+  const chars = t.length;
+  const noSpace = t.replace(/\s/g, "").length;
+  const sentences = (t.match(/[^.!?]*[a-zA-Z0-9][^.!?]*([.!?]+|$)/g) || []).filter(s => s.trim()).length;
+  const paras = t.split(/\n\s*\n/).filter(p => p.trim()).length;
+  const mins = m => m < 1 ? `${Math.ceil(m * 60)} sec` : `${Math.round(m * 10) / 10} min`;
+  const box = $("wordStats");
+  box.textContent = "";
+  box.append(
+    statBox(words, "words"), statBox(chars, "characters"), statBox(noSpace, "no spaces"),
+    statBox(sentences, "sentences"), statBox(paras, "paragraphs"),
+    statBox(words ? mins(words / 200) : "0", "to read"), statBox(words ? mins(words / 130) : "0", "to say out loud")
+  );
+  const limit = parseInt($("wordLimit").value, 10);
+  const msg = $("wordLimitMsg");
+  if (limit > 0) {
+    const left = limit - words;
+    msg.textContent = left >= 0 ? `${left} words left` : `${-left} words over the limit`;
+    msg.className = left >= 0 ? "muted" : "err";
+  } else { msg.textContent = ""; }
+}
+$("wordText").addEventListener("input", wordCalc);
+$("wordLimit").addEventListener("input", wordCalc);
+wordCalc();
+
+/* ---------- age ---------- */
+let ageTimer = null;
+function ageCalc() {
+  clearInterval(ageTimer);
+  const val = $("ageDate").value;
+  const out = $("ageOut");
+  if (!val) { out.innerHTML = '<p class="muted">Pick a birthday to see the exact age.</p>'; return; }
+  store.set("birthday", val);
+  const [Y, M, D] = val.split("-").map(Number);
+  const birth = new Date(Y, M - 1, D);
+  const now = new Date();
+  if (birth > now) { out.innerHTML = '<p class="err">That date is in the future. Pick a date before today.</p>'; return; }
+  let y = now.getFullYear() - birth.getFullYear();
+  let m = now.getMonth() - birth.getMonth();
+  let d = now.getDate() - birth.getDate();
+  if (d < 0) { m--; d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+  if (m < 0) { y--; m += 12; }
+  const days = Math.floor((now - birth) / 86400000);
+  let next = new Date(now.getFullYear(), M - 1, D);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (next < today) next = new Date(now.getFullYear() + 1, M - 1, D);
+  const until = Math.round((next - today) / 86400000);
+  const weekday = next.toLocaleDateString("en-IN", { weekday: "long" });
+  out.textContent = "";
+  const big = document.createElement("div"); big.className = "big";
+  big.textContent = `${y} years, ${m} months, ${d} days`;
+  const stats = document.createElement("div"); stats.className = "stats";
+  const secBox = statBox("", "seconds alive");
+  stats.append(
+    statBox(fmt(days), "days alive"), statBox(fmt(days * 24), "hours alive"), secBox,
+    statBox(until === 0 ? "today 🎂" : until, until === 0 ? "happy birthday" : `days to next birthday (${weekday})`)
+  );
+  out.append(big, stats);
+  const secN = secBox.querySelector(".n");
+  const tick = () => { secN.textContent = fmt(Math.floor((Date.now() - birth) / 1000)); };
+  tick();
+  ageTimer = setInterval(tick, 1000);
+}
+$("ageDate").addEventListener("input", ageCalc);
+$("ageDate").max = new Date().toISOString().slice(0, 10);
+(function () { const b = store.get("birthday", ""); if (b) { $("ageDate").value = b; ageCalc(); } })();
+
+/* ---------- color ---------- */
+function hexToRgb(h) {
+  const n = parseInt(h.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+  let h = 0, s = 0; const l = (mx + mn) / 2;
+  if (mx !== mn) {
+    const d = mx - mn;
+    s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+    h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    h *= 60;
+  }
+  return [Math.round(h), Math.round(s * 100), Math.round(l * 100)];
+}
+function colSet(hex) {
+  hex = hex.toLowerCase();
+  $("colPick").value = hex;
+  if (document.activeElement !== $("colHex")) $("colHex").value = hex;
+  $("colSwatch").style.background = hex;
+  const [r, g, b] = hexToRgb(hex);
+  const [h, s, l] = rgbToHsl(r, g, b);
+  const out = $("colOut");
+  out.textContent = "";
+  out.append(outRow("hex", hex), outRow("rgb", `rgb(${r}, ${g}, ${b})`), outRow("hsl", `hsl(${h}, ${s}%, ${l}%)`));
+}
+$("colPick").addEventListener("input", e => colSet(e.target.value));
+$("colHex").addEventListener("input", e => {
+  let v = e.target.value.trim();
+  if (!v.startsWith("#")) v = "#" + v;
+  if (/^#[0-9a-fA-F]{3}$/.test(v)) v = "#" + v.slice(1).split("").map(c => c + c).join("");
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) colSet(v);
+});
+$("colHex").addEventListener("blur", () => { $("colHex").value = $("colPick").value; });
+$("colRand").addEventListener("click", () => colSet("#" + Math.floor(Math.random() * 0x1000000).toString(16).padStart(6, "0")));
+colSet("#ffb000");
+
+/* ---------- base ---------- */
+const BASES = { 2: { name: "binary", re: /^[01]+$/, pre: "0b", hint: "Binary only uses 0 and 1." },
+                8: { name: "octal", re: /^[0-7]+$/, pre: "0o", hint: "Octal only uses digits 0 to 7." },
+                10: { name: "decimal", re: /^[0-9]+$/, pre: "", hint: "Decimal only uses digits 0 to 9." },
+                16: { name: "hex", re: /^[0-9a-fA-F]+$/, pre: "0x", hint: "Hex only uses 0 to 9 and A to F." } };
+function baseCalc() {
+  const raw = $("baseIn").value.trim().replace(/^0[bxo]/i, "").replace(/[\s_]/g, "");
+  const from = Number($("baseFrom").value);
+  const err = $("baseErr"), out = $("baseOut");
+  out.textContent = "";
+  if (!raw) { err.hidden = true; return; }
+  if (!BASES[from].re.test(raw)) { err.textContent = BASES[from].hint + " Whole numbers only."; err.hidden = false; return; }
+  err.hidden = true;
+  const n = BigInt(BASES[from].pre + raw);
+  out.append(
+    outRow("binary", n.toString(2)), outRow("octal", n.toString(8)),
+    outRow("decimal", n.toString(10)), outRow("hex", n.toString(16).toUpperCase())
+  );
+}
+$("baseIn").addEventListener("input", baseCalc);
+$("baseFrom").addEventListener("change", baseCalc);
+baseCalc();
+
+/* ---------- case ---------- */
+const splitWords = s => s.replace(/([a-z0-9])([A-Z])/g, "$1 $2").split(/[^a-zA-Z0-9]+/).filter(Boolean);
+const CASES = {
+  upper: s => s.toUpperCase(),
+  lower: s => s.toLowerCase(),
+  title: s => s.toLowerCase().replace(/(^|[\s\-(["'])([a-z])/g, (m, a, b) => a + b.toUpperCase()),
+  sentence: s => s.toLowerCase().replace(/(^\s*|[.!?]\s+)([a-z])/g, (m, a, b) => a + b.toUpperCase()),
+  camel: s => s.split("\n").map(line => splitWords(line).map((w, i) => i ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w.toLowerCase()).join("")).join("\n"),
+  snake: s => s.split("\n").map(line => splitWords(line).map(w => w.toLowerCase()).join("_")).join("\n"),
+  kebab: s => s.split("\n").map(line => splitWords(line).map(w => w.toLowerCase()).join("-")).join("\n")
+};
+let caseMode = "upper";
+function caseRun() {
+  $("caseOut").value = CASES[caseMode]($("caseIn").value);
+  document.querySelectorAll("#caseBtns .btn").forEach(b => b.classList.toggle("on", b.dataset.case === caseMode));
+}
+document.querySelectorAll("#caseBtns .btn").forEach(b => b.addEventListener("click", () => { caseMode = b.dataset.case; caseRun(); }));
+$("caseIn").addEventListener("input", caseRun);
+$("caseCopy").addEventListener("click", e => copyText($("caseOut").value, e.currentTarget));
+caseRun();
+
+/* ---------- dice + coin ---------- */
+const PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+const coinTally = { heads: 0, tails: 0 };
+function drawDie(v) {
+  const d = document.createElement("div");
+  d.className = "die";
+  d.setAttribute("role", "img");
+  d.setAttribute("aria-label", String(v));
+  for (let i = 0; i < 9; i++) {
+    const p = document.createElement("i");
+    if (PIPS[v].includes(i)) p.className = "p";
+    d.appendChild(p);
+  }
+  return d;
+}
+function rollDice(final) {
+  const n = Number($("diceN").value);
+  const vals = Array.from({ length: n }, () => 1 + Math.floor(Math.random() * 6));
+  const box = $("diceOut");
+  box.textContent = "";
+  vals.forEach(v => box.appendChild(drawDie(v)));
+  if (final) $("diceTotal").textContent = n > 1 ? `total ${vals.reduce((a, b) => a + b, 0)}` : `you rolled ${vals[0]}`;
+}
+$("diceRoll").addEventListener("click", () => {
+  $("diceRoll").disabled = true;
+  $("diceTotal").textContent = "rolling...";
+  let i = 0;
+  const steps = reduceMotion ? 0 : 7;
+  const go = () => {
+    if (i++ < steps) { rollDice(false); setTimeout(go, 60); }
+    else { rollDice(true); $("diceRoll").disabled = false; }
+  };
+  go();
+});
+$("coinFlip").addEventListener("click", () => {
+  $("coinFlip").disabled = true;
+  let i = 0;
+  const steps = reduceMotion ? 0 : 8;
+  const go = () => {
+    if (i++ < steps) { $("coinOut").textContent = i % 2 ? "heads" : "tails"; setTimeout(go, 70); return; }
+    const r = Math.random() < 0.5 ? "heads" : "tails";
+    coinTally[r]++;
+    $("coinOut").textContent = r;
+    $("coinTally").textContent = `heads ${coinTally.heads}, tails ${coinTally.tails}`;
+    $("coinFlip").disabled = false;
+  };
+  go();
+});
+$("diceOut").appendChild(drawDie(6));
+$("diceOut").appendChild(drawDie(6));
+
+/* ---------- reaction ---------- */
+const react = { state: "idle", timer: null, startAt: 0, recent: [], best: store.get("reactBest", null) };
+function reactShow(cls, main, sub) {
+  const el = $("react");
+  el.className = "react" + (cls ? " " + cls : "");
+  el.textContent = "";
+  el.append(main);
+  if (sub) { const s = document.createElement("span"); s.className = "sub"; s.textContent = sub; el.appendChild(s); }
+}
+function reactStats() {
+  const avg = react.recent.length ? Math.round(react.recent.reduce((a, b) => a + b, 0) / react.recent.length) : null;
+  $("reactStats").textContent =
+    (react.best ? `best ${react.best} ms` : "no best yet") +
+    (avg ? `. average of last ${react.recent.length}: ${avg} ms` : "");
+}
+function reactReset() {
+  clearTimeout(react.timer);
+  react.state = "idle";
+  reactShow("", "click or tap to start", "wait for the box to light up, then click as fast as you can");
+  reactStats();
+}
+function reactHit() {
+  if (react.state === "idle" || react.state === "done" || react.state === "early") {
+    react.state = "wait";
+    reactShow("wait", "wait for it...");
+    react.timer = setTimeout(() => {
+      react.state = "go";
+      react.startAt = performance.now();
+      reactShow("go", "CLICK!");
+    }, 1500 + Math.random() * 3000);
+  } else if (react.state === "wait") {
+    clearTimeout(react.timer);
+    react.state = "early";
+    reactShow("early", "too early!", "click to try again");
+  } else if (react.state === "go") {
+    const ms = Math.round(performance.now() - react.startAt);
+    react.state = "done";
+    react.recent = [ms, ...react.recent].slice(0, 5);
+    const newBest = !react.best || ms < react.best;
+    if (newBest) { react.best = ms; store.set("reactBest", ms); }
+    const verdict = ms < 200 ? "insane." : ms < 250 ? "really quick." : ms < 320 ? "solid." : "you can do better.";
+    reactShow("", `${ms} ms`, (newBest ? "new best! " : "") + verdict + " click to go again");
+    reactStats();
+  }
+}
+$("react").addEventListener("pointerdown", e => { e.preventDefault(); reactHit(); });
+$("react").addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !e.repeat) { e.preventDefault(); reactHit(); } });
+
+/* ---------- typing ---------- */
+const WORDS = ("the be to of and a in that have it for not on with he as you do at this but his by from they we say her she or an will my one all would there their what so up out if about who get which go me when make can like time no just him know take people into year your good some could them see other than then now look only come its over think also back after use two how our work first well way even new want because any these give day most us great small own same last long feel world school still read hand play city keep start night house point mind open light friend game music word lunch cricket rain beach ocean");
+const WORD_LIST = WORDS.split(" ");
+const typing = { secs: store.get("typeSecs", 30), text: "", started: false, done: false, endAt: 0, timer: null };
+function typeNew() {
+  clearInterval(typing.timer);
+  typing.started = false; typing.done = false;
+  const words = Array.from({ length: 70 }, () => WORD_LIST[Math.floor(Math.random() * WORD_LIST.length)]);
+  typing.text = words.join(" ");
+  $("typeIn").value = ""; $("typeIn").disabled = false;
+  $("typeTime").textContent = typing.secs;
+  $("typeWpm").textContent = "0"; $("typeAcc").textContent = "100%";
+  $("typeResult").textContent = "";
+  document.querySelectorAll("[data-secs]").forEach(b => b.classList.toggle("on", Number(b.dataset.secs) === typing.secs));
+  typeDraw();
+}
+function typeDraw() {
+  const typed = $("typeIn").value;
+  const box = $("typePassage");
+  box.textContent = "";
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < typing.text.length; i++) {
+    const s = document.createElement("span");
+    s.textContent = typing.text[i];
+    if (i < typed.length) s.className = typed[i] === typing.text[i] ? "ok" : "no";
+    else if (i === typed.length && !typing.done) s.className = "cur";
+    frag.appendChild(s);
+  }
+  box.appendChild(frag);
+}
+function typeScore() {
+  const typed = $("typeIn").value;
+  let correct = 0;
+  for (let i = 0; i < typed.length; i++) if (typed[i] === typing.text[i]) correct++;
+  const elapsed = typing.started ? Math.min(typing.secs, (Date.now() - (typing.endAt - typing.secs * 1000)) / 1000) : 0;
+  const wpm = elapsed > 0 ? Math.round((correct / 5) / (elapsed / 60)) : 0;
+  const acc = typed.length ? Math.round((correct / typed.length) * 100) : 100;
+  return { wpm, acc };
+}
+function typeTick() {
+  const left = Math.max(0, Math.ceil((typing.endAt - Date.now()) / 1000));
+  $("typeTime").textContent = left;
+  const { wpm, acc } = typeScore();
+  $("typeWpm").textContent = wpm; $("typeAcc").textContent = acc + "%";
+  if (left <= 0) typeFinish();
+}
+function typeFinish() {
+  clearInterval(typing.timer);
+  typing.done = true;
+  $("typeIn").disabled = true;
+  const { wpm, acc } = typeScore();
+  $("typeWpm").textContent = wpm; $("typeAcc").textContent = acc + "%";
+  const best = store.get("typeBest", 0);
+  if (wpm > best) store.set("typeBest", wpm);
+  $("typeResult").textContent = `${wpm} wpm at ${acc}% accuracy.` + (wpm > best ? " new best!" : ` your best is ${best} wpm.`);
+  typeDraw();
+}
+$("typeIn").addEventListener("input", () => {
+  if (typing.done) return;
+  if (!typing.started) {
+    typing.started = true;
+    typing.endAt = Date.now() + typing.secs * 1000;
+    typing.timer = setInterval(typeTick, 200);
+  }
+  typeDraw();
+  if ($("typeIn").value.length >= typing.text.length) typeFinish();
+});
+$("typeIn").addEventListener("paste", e => e.preventDefault());
+document.querySelectorAll("[data-secs]").forEach(b => b.addEventListener("click", () => {
+  typing.secs = Number(b.dataset.secs); store.set("typeSecs", typing.secs); typeNew(); $("typeIn").focus();
+}));
+$("typeRestart").addEventListener("click", () => { typeNew(); $("typeIn").focus(); });
+typeNew();
+
+/* ---------- start ---------- */
+route();
+</script>
+</body>
+</html>
